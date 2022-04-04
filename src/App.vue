@@ -306,6 +306,30 @@ export default {
       this.graph = [];
     },
   },
+  watch: {
+    filterTickers() {
+      this.page = 1;
+      window.history.pushState(
+        null,
+        document.title,
+        `${window.location.pathname}?filter=${this.filterTickers}&page=${this.page}`
+      );
+      const { filter, page } = Object.fromEntries(
+        new URL(window.location).searchParams.entries()
+      );
+      if(filter){
+        this.filterTickers = filter;
+      }
+    },
+    page() {
+      this.page = 1;
+      window.history.pushState(
+        null,
+        document.title,
+        `${window.location.pathname}?filter=${this.filterTickers}&page=${this.page}`
+      );
+    },
+  },
 };
 </script>
 
