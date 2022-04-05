@@ -78,7 +78,7 @@
           <label for="filter"
             >Фильтр:
             <input
-              v-model="filterTickers"
+              v-model="filter"
               type="text"
               name="filter"
               id="filter"
@@ -108,7 +108,7 @@
         <hr class="w-full border-t border-gray-600 my-4" />
         <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div
-            v-for="t of filtered()"
+            v-for="t of filterTickers()"
             :key="t.name"
             :class="{
               'border-4': selected === t,
@@ -193,6 +193,16 @@
 </template>
 
 <script>
+//10. [ ] Наличие в состоянии зависимых данных | Критичность 5+.
+//2. [ ] При удалении остается таймер | Критичность 5.
+//4. [ ]Запросы напрямую внутри компонента | Критичность 5.
+//6. [ ] Обработка ошибок API| Критичность 5.
+//3. [ ] Количество запросов | Критичность 4.
+//8. [ ] При удалении тикера не меняется local storage| Критичность 4.
+//1. [ ] Одинаковый код в watch | Критичность 3.
+//9. [ ] local storage и анонимные вкладки | Критичность 3.
+//7. [ ] График плох если будет много цен | Критичность 2.
+//5. [ ] Магические строки и числа (URL,3000ms,local storage key,кол-во на странице) | Критичность 1.
 export default {
   name: "App",
   data() {
@@ -203,7 +213,7 @@ export default {
       graph: [],
       autocomplete: [],
       tickersList: [],
-      filterTickers: "",
+      filter: "",
       isValid: true,
       page: 1,
       nextPage: true,
@@ -241,15 +251,12 @@ export default {
         this.updateStorage();
         this.updatePrice(currentTicker);
         this.ticker = "";
-        this.filterTickers = "";
+        this.filter= "";
       } else {
         return;
       }
     },
-    //1 - 0,5
-    //2 - 6,11
-    //(6*(page-1),6*page)
-    //arr.slice(6*(page-1),6*(page-1))
+
     updatePrice(ticker) {
       let timer = setInterval(() => {
         fetch(
@@ -273,6 +280,7 @@ export default {
       this.tickers = this.tickers.filter((ticker) => {
         return ticker !== itemToRemove;
       });
+      this.updateStorage();
     },
     validateTicker() {
       this.isValid =
@@ -287,13 +295,15 @@ export default {
         return 5 + (+(price - minVal) * 95) / (maxVal - minVal);
       });
     },
-    filtered() {
+    filterTickers() {
+      const start = 6 * (this.page - 1);
+      const end = 6 * this.page;
       const filtered = this.tickers.filter((ticker) =>
-        ticker.name.includes(this.filterTickers.toUpperCase())
+        ticker.name.includes(this.filter.toUpperCase())
       );
       this.nextPage = filtered.length > this.page * 6;
 
-      return filtered.slice(6 * (this.page - 1), 6 * this.page);
+      return filtered.slice(start, end);
     },
     transformTickerName() {
       return this.ticker.toUpperCase();
@@ -307,18 +317,18 @@ export default {
     },
   },
   watch: {
-    filterTickers() {
+    filter() {
       this.page = 1;
       window.history.pushState(
         null,
         document.title,
-        `${window.location.pathname}?filter=${this.filterTickers}&page=${this.page}`
+        `${window.location.pathname}?filter=${this.filter}&page=${this.page}`
       );
       const { filter, page } = Object.fromEntries(
         new URL(window.location).searchParams.entries()
       );
       if(filter){
-        this.filterTickers = filter;
+        this.filter = filter;
       }
     },
     page() {
@@ -326,7 +336,7 @@ export default {
       window.history.pushState(
         null,
         document.title,
-        `${window.location.pathname}?filter=${this.filterTickers}&page=${this.page}`
+        `${window.location.pathname}?filter=${this.filter}&page=${this.page}`
       );
     },
   },
