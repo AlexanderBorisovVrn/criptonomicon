@@ -306,6 +306,7 @@
 </template>
 
 <script>
+const { fetchTickers } = require("./api");
 //10. [ ] Наличие в состоянии зависимых данных | Критичность 5+.
 //2. [ ] При удалении остается таймер | Критичность 5.
 //4. [ ]Запросы напрямую внутри компонента | Критичность 5.
@@ -333,6 +334,7 @@ export default {
     };
   },
   created() {
+    console.log(fetchTickers);
     const tickersList = JSON.parse(localStorage.getItem("tickersList"));
     if (tickersList) {
       this.tickers = tickersList;
@@ -383,13 +385,12 @@ export default {
         return 5 + (+(price - minVal) * 95) / (maxVal - minVal);
       });
     },
-    pageStateOptions(){
-     return {
-       page:this.page,
-       filter:this.filter
-     }
-
-    }
+    pageStateOptions() {
+      return {
+        page: this.page,
+        filter: this.filter,
+      };
+    },
   },
 
   methods: {
@@ -397,7 +398,7 @@ export default {
       this.validateTicker();
       let currentTicker = { name: this.transformTickerName(), price: "-" };
       if (this.isValid) {
-        this.tickers=[...this.tickers,currentTicker];
+        this.tickers = [...this.tickers, currentTicker];
         this.updatePrice(currentTicker);
         this.ticker = "";
         this.filter = "";
@@ -407,19 +408,20 @@ export default {
     },
 
     updatePrice(ticker) {
-      let timer = setInterval(() => {
-        fetch(
-          `https://min-api.cryptocompare.com/data/price?fsym=${ticker.name}&tsyms=USD&api_key=39dc4489c05f1d652c367141e7d6cbe708692580d58cb897f9bc55e5ca910df9`
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            this.tickers.find((t) => t.name === ticker.name).price =
-              data.USD > 1 ? data.USD.toFixed(2) : data.USD.toPrecision(3);
-            if (this.selected?.name === ticker.name) {
-              this.graph.push(data.USD);
-            }
-          })
-          .catch((e) => clearInterval(timer));
+      let timer = setInterval(async () => {
+        const fetchedTickers = await fetchTickers(ticker.name);
+        try {
+          const currentCurrency = fetchedTickers.USD;
+          this.tickers.find((t) => t.name === ticker.name).price =
+            currentCurrency > 1
+              ? currentCurrency.toFixed(2)
+              : currentCurrency.toPrecision(3);
+          if (this.selected?.name === ticker.name) {
+            this.graph.push(currentCurrency);
+          }
+        } catch (error) {
+          clearTimeout(timer);
+        }
       }, 3000);
     },
 
@@ -427,7 +429,6 @@ export default {
       this.tickers = this.tickers.filter((ticker) => {
         return ticker !== itemToRemove;
       });
-      this.updateStorage();
     },
     validateTicker() {
       this.isValid =
@@ -447,15 +448,15 @@ export default {
     },
   },
   watch: {
-    paginatedTicker(){
-      if(this.paginatedTicker===0 && this.page>1){
-        this.page-=1
+    paginatedTicker() {
+      if (this.paginatedTicker === 0 && this.page > 1) {
+        this.page -= 1;
       }
     },
-    selected(){
+    selected() {
       this.graph = [];
     },
-    tickers(){
+    tickers() {
       localStorage.setItem("tickersList", JSON.stringify(this.tickers));
     },
     pageStateOptions(value) {
