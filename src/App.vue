@@ -383,6 +383,13 @@ export default {
         return 5 + (+(price - minVal) * 95) / (maxVal - minVal);
       });
     },
+    pageStateOptions(){
+     return {
+       page:this.page,
+       filter:this.filter
+     }
+
+    }
   },
 
   methods: {
@@ -390,8 +397,7 @@ export default {
       this.validateTicker();
       let currentTicker = { name: this.transformTickerName(), price: "-" };
       if (this.isValid) {
-        this.tickers.push(currentTicker);
-        this.updateStorage();
+        this.tickers=[...this.tickers,currentTicker];
         this.updatePrice(currentTicker);
         this.ticker = "";
         this.filter = "";
@@ -416,9 +422,7 @@ export default {
           .catch((e) => clearInterval(timer));
       }, 3000);
     },
-    updateStorage() {
-      localStorage.setItem("tickersList", JSON.stringify(this.tickers));
-    },
+
     remove(itemToRemove) {
       this.tickers = this.tickers.filter((ticker) => {
         return ticker !== itemToRemove;
@@ -440,7 +444,6 @@ export default {
     },
     isSelected(ticker) {
       this.selected = ticker;
-      this.graph = [];
     },
   },
   watch: {
@@ -449,12 +452,18 @@ export default {
         this.page-=1
       }
     },
-    filter() {
+    selected(){
+      this.graph = [];
+    },
+    tickers(){
+      localStorage.setItem("tickersList", JSON.stringify(this.tickers));
+    },
+    pageStateOptions(value) {
       this.page = 1;
       window.history.pushState(
         null,
         document.title,
-        `${window.location.pathname}?filter=${this.filter}&page=${this.page}`
+        `${window.location.pathname}?filter=${value.filter}&page=${value.page}`
       );
       const { filter, page } = Object.fromEntries(
         new URL(window.location).searchParams.entries()
@@ -463,14 +472,6 @@ export default {
         this.filter = filter;
       }
     },
-    // page() {
-    //   this.page = 1;
-    //   window.history.pushState(
-    //     null,
-    //     document.title,
-    //     `${window.location.pathname}?filter=${this.filter}&page=${this.page}`
-    //   );
-    // },
   },
 };
 </script>
