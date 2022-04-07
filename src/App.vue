@@ -24,7 +24,16 @@
                 type="text"
                 name="wallet"
                 id="wallet"
-                class="block w-full pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
+                class="
+                  block
+                  w-full
+                  pr-10
+                  border-gray-300
+                  text-gray-900
+                  focus:outline-none focus:ring-gray-500 focus:border-gray-500
+                  sm:text-sm
+                  rounded-md
+                "
                 placeholder="Например DOGE"
               />
             </div>
@@ -40,7 +49,18 @@
                   }
                 "
                 :key="idx"
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
+                class="
+                  inline-flex
+                  items-center
+                  px-2
+                  m-1
+                  rounded-md
+                  text-xs
+                  font-medium
+                  bg-gray-300
+                  text-gray-800
+                  cursor-pointer
+                "
               >
                 {{ l }}
               </span>
@@ -53,7 +73,28 @@
         <button
           @click="add"
           type="button"
-          class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+          class="
+            my-4
+            inline-flex
+            items-center
+            py-2
+            px-4
+            border border-transparent
+            shadow-sm
+            text-sm
+            leading-4
+            font-medium
+            rounded-full
+            text-white
+            bg-gray-600
+            hover:bg-gray-700
+            transition-colors
+            duration-300
+            focus:outline-none
+            focus:ring-2
+            focus:ring-offset-2
+            focus:ring-gray-500
+          "
         >
           <!-- Heroicon name: solid/mail -->
           <svg
@@ -82,22 +123,73 @@
               type="text"
               name="filter"
               id="filter"
-              class="pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
+              class="
+                pr-10
+                border-gray-300
+                text-gray-900
+                focus:outline-none focus:ring-gray-500 focus:border-gray-500
+                sm:text-sm
+                rounded-md
+              "
             />
           </label>
           <div class="flex justyfy-between mx-2">
             <button
               v-if="page > 1"
               @click="page--"
-              class="my-4 mx-2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              class="
+                my-4
+                mx-2
+                inline-flex
+                items-center
+                py-2
+                px-4
+                border border-transparent
+                shadow-sm
+                text-sm
+                leading-4
+                font-medium
+                rounded-full
+                text-white
+                bg-gray-600
+                hover:bg-gray-700
+                transition-colors
+                duration-300
+                focus:outline-none
+                focus:ring-2
+                focus:ring-offset-2
+                focus:ring-gray-500
+              "
               type="button"
             >
               Назад
             </button>
             <button
               v-if="hasNextPage"
-              @click="page++"
-              class="my-4 mx2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+              @click="page += 1"
+              class="
+                my-4
+                mx2
+                inline-flex
+                items-center
+                py-2
+                px-4
+                border border-transparent
+                shadow-sm
+                text-sm
+                leading-4
+                font-medium
+                rounded-full
+                text-white
+                bg-gray-600
+                hover:bg-gray-700
+                transition-colors
+                duration-300
+                focus:outline-none
+                focus:ring-2
+                focus:ring-offset-2
+                focus:ring-gray-500
+              "
               type="button"
             >
               Вперед
@@ -114,7 +206,14 @@
               'border-4': selected === t,
             }"
             @click="isSelected(t)"
-            class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
+            class="
+              bg-white
+              overflow-hidden
+              shadow
+              rounded-lg
+              border-purple-800 border-solid
+              cursor-pointer
+            "
           >
             <div class="px-4 py-5 sm:p-6 text-center">
               <dt class="text-sm font-medium text-gray-500 truncate">
@@ -127,7 +226,21 @@
             <div class="w-full border-t border-gray-200"></div>
             <button
               @click.stop="remove(t)"
-              class="flex items-center justify-center font-medium w-full bg-gray-100 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:opacity-20 transition-all focus:outline-none"
+              class="
+                flex
+                items-center
+                justify-center
+                font-medium
+                w-full
+                bg-gray-100
+                px-4
+                py-4
+                sm:px-6
+                text-md text-gray-500
+                hover:text-gray-600 hover:bg-gray-200 hover:opacity-20
+                transition-all
+                focus:outline-none
+              "
             >
               <svg
                 class="h-5 w-5"
@@ -215,7 +328,6 @@ export default {
       autocomplete: [],
       tickersList: [],
       filter: "",
-      isValid: true,
       page: 1,
       nextPage: true,
     };
@@ -230,7 +342,7 @@ export default {
       .then((data) => {
         this.tickersList = Object.keys(data.Data);
       });
-    setTimeout(this.updateTickers,3000)  
+    setInterval(this.updateTickers, 3000);
   },
   beforeUpdate() {
     this.autocomplete = this.tickersList
@@ -238,7 +350,7 @@ export default {
         if (!this.ticker) {
           return;
         }
-        return el.indexOf(this.transformTickerName()) > -1;
+        return el.indexOf(this.ticker.toUpperCase()) > -1;
       })
       .slice(0, 4);
   },
@@ -277,15 +389,28 @@ export default {
         filter: this.filter,
       };
     },
+    isValid() {
+      return (
+        this.tickers.filter(
+          (ticker) => ticker.name === this.ticker.toUpperCase()
+        ).length === 0 
+      );
+    },
+    isInputTicker(){
+      return !!this.ticker.trim()
+    }
   },
 
   methods: {
     add() {
-      this.validateTicker();
-      let currentTicker = { name: this.transformTickerName(), price: "-" };
+      if(!this.isInputTicker){
+         this.ticker = "";
+        this.filter = "";
+        return
+      }
       if (this.isValid) {
+      let currentTicker = { name: this.ticker.toUpperCase(), price: "-" };
         this.tickers = [...this.tickers, currentTicker];
-        this.updateTickers();
         this.ticker = "";
         this.filter = "";
       } else {
@@ -294,13 +419,16 @@ export default {
     },
 
     async updateTickers() {
-      if(this.tickers.length === 0 ){
-        return
+      if (!this.tickers.length) {
+        return;
       }
-      const exchangeData =await fetchTickers(this.tickers.map(t=>t.name));
-      this.tickers = this.tickers.forEach(t=>{
-        let price = exchangeData[t.name.toUpperCase()];
-        t.price=price});
+      const exchangeData = await fetchTickers(this.tickers.map((t) => t.name));
+      this.tickers.forEach((ticker) => {
+        const price = 1 / exchangeData[ticker.name.toUpperCase()];
+        if (price) {
+          ticker.price = price > 1 ? price.toFixed(2) : price.toPrecision(3);
+        }
+      });
     },
 
     remove(itemToRemove) {
@@ -308,16 +436,8 @@ export default {
         return ticker !== itemToRemove;
       });
     },
-    validateTicker() {
-      this.isValid =
-        this.tickers.filter(
-          (ticker) => ticker.name === this.transformTickerName()
-        ).length === 0;
-    },
+    
 
-    transformTickerName() {
-      return this.ticker.toUpperCase();
-    },
     handler() {
       this.isValid = true;
     },
@@ -327,7 +447,7 @@ export default {
   },
   watch: {
     paginatedTicker() {
-      if (this.paginatedTicker === 0 && this.page > 1) {
+      if (this.paginatedTicker.length === 0 && this.page > 1) {
         this.page -= 1;
       }
     },
@@ -337,8 +457,8 @@ export default {
     tickers() {
       localStorage.setItem("tickersList", JSON.stringify(this.tickers));
     },
+
     pageStateOptions(value) {
-      this.page = 1;
       window.history.pushState(
         null,
         document.title,
