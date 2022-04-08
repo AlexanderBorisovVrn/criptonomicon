@@ -428,9 +428,9 @@ export default {
       const exchangeData = await fetchTickers(tickersList);
    
       this.tickers.forEach((ticker) => {
-        const price = 1 / exchangeData[ticker.name.toUpperCase()];
+        const price =  exchangeData[ticker.name.toUpperCase()];
         if (price) {
-          ticker.price = price > 1 ? price.toFixed(2) : price.toPrecision(2);
+          ticker.price = this.transformPrice(price);
         }
       });
     },
