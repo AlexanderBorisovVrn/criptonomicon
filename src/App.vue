@@ -417,7 +417,7 @@ export default {
         return;
       }
     },
-
+    
     async updateTickers() {
       if (!this.tickers.length) {
         return;
@@ -426,7 +426,7 @@ export default {
       this.tickers.forEach((ticker) => {
         const price = 1 / exchangeData[ticker.name.toUpperCase()];
         if (price) {
-          ticker.price = price > 1 ? price.toFixed(2) : price.toPrecision(3);
+          ticker.price = price > 1 ? price.toFixed(2) : price.toPrecision(2);
         }
       });
     },
