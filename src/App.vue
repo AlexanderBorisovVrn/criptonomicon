@@ -306,7 +306,7 @@
 </template>
 
 <script>
-const { fetchTickers } = require("./api");
+const { fetchTickers, subscribeToTicker } = require("./api");
 //10. [ ] Наличие в состоянии зависимых данных | Критичность 5+.
 //2. [ ] При удалении остается таймер | Критичность 5.
 //4. [ ]Запросы напрямую внутри компонента | Критичность 5.
@@ -342,6 +342,8 @@ export default {
       .then((data) => {
         this.tickersList = Object.keys(data.Data);
       });
+
+      this.tickers.forEach(ticker=>subscribeToTicker(ticker.name,()=>{}))
     setInterval(this.updateTickers, 3000);
   },
   beforeUpdate() {
@@ -393,7 +395,7 @@ export default {
       return (
         this.tickers.filter(
           (ticker) => ticker.name === this.ticker.toUpperCase()
-        ).length === 0 
+        ).length === 0
       );
     },
     isInputTicker(){
@@ -411,6 +413,7 @@ export default {
       if (this.isValid) {
       let currentTicker = { name: this.ticker.toUpperCase(), price: "-" };
         this.tickers = [...this.tickers, currentTicker];
+        subscribeToTicker(currentTicker.name,()=>{})
         this.ticker = "";
         this.filter = "";
       } else {
@@ -425,7 +428,7 @@ export default {
         return;
       }
       const tickersList = this.tickers.map((t) => t.name);
-      const exchangeData = await fetchTickers(tickersList);
+      const exchangeData = await fetchTickers();
    
       this.tickers.forEach((ticker) => {
         const price =  exchangeData[ticker.name.toUpperCase()];
