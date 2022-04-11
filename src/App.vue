@@ -17,7 +17,6 @@
             >
             <div class="mt-1 relative rounded-md shadow-md">
               <input
-                @keydown="handler"
                 @keydown.enter="add"
                 autocomplete="off"
                 v-model="ticker"
@@ -306,7 +305,7 @@
 </template>
 
 <script>
-const { fetchTickers, subscribeToTicker } = require("./api");
+const { fetchTickers, subscribeToTicker, unsubscribe } = require("./api");
 //10. [ ] Наличие в состоянии зависимых данных | Критичность 5+.
 //2. [ ] При удалении остается таймер | Критичность 5.
 //4. [ ]Запросы напрямую внутри компонента | Критичность 5.
@@ -343,8 +342,11 @@ export default {
         this.tickersList = Object.keys(data.Data);
       });
 
-      this.tickers.forEach(ticker=>subscribeToTicker(ticker.name,()=>{}))
-    setInterval(this.updateTickers, 3000);
+    this.tickers.forEach((ticker) =>
+      subscribeToTicker(ticker.name, (price) =>
+        this.updateTickers(ticker.name, price)
+      )
+    );
   },
   beforeUpdate() {
     this.autocomplete = this.tickersList
@@ -398,56 +400,46 @@ export default {
         ).length === 0
       );
     },
-    isInputTicker(){
-      return !!this.ticker.trim()
-    }
+    isInputTicker() {
+      return !!this.ticker.trim();
+    },
   },
 
   methods: {
     add() {
-      if(!this.isInputTicker){
-         this.ticker = "";
+      if (!this.isInputTicker) {
+        this.ticker = "";
         this.filter = "";
-        return
+        return;
       }
       if (this.isValid) {
-      let currentTicker = { name: this.ticker.toUpperCase(), price: "-" };
+        let currentTicker = { name: this.ticker.toUpperCase(), price: "-" };
         this.tickers = [...this.tickers, currentTicker];
-        subscribeToTicker(currentTicker.name,()=>{})
+        subscribeToTicker(currentTicker.name, (price) => {
+          this.updateTickers(currentTicker.name,price)
+        });
         this.ticker = "";
         this.filter = "";
       } else {
         return;
       }
     },
-    transformPrice(price){
-     return price > 1 ? price.toFixed(2) : price.toPrecision(2);
+    transformPrice(price) {
+      return price > 1 ? price.toFixed(2) : price.toPrecision(2);
     },
-    async updateTickers() {
-      if (!this.tickers.length) {
-        return;
-      }
-      const tickersList = this.tickers.map((t) => t.name);
-      const exchangeData = await fetchTickers();
-   
-      this.tickers.forEach((ticker) => {
-        const price =  exchangeData[ticker.name.toUpperCase()];
-        if (price) {
-          ticker.price = this.transformPrice(price);
-        }
-      });
+    updateTickers(tickerName, price) {
+      this.tickers
+        .filter((t) => t.name === tickerName)
+        .forEach((t) => (t.price = price));
     },
 
     remove(itemToRemove) {
       this.tickers = this.tickers.filter((ticker) => {
         return ticker !== itemToRemove;
       });
+      unsubscribe(itemToRemove.name)
     },
-    
 
-    handler() {
-      this.isValid = true;
-    },
     isSelected(ticker) {
       this.selected = ticker;
     },
