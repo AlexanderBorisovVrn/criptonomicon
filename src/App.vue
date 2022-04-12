@@ -23,16 +23,7 @@
                 type="text"
                 name="wallet"
                 id="wallet"
-                class="
-                  block
-                  w-full
-                  pr-10
-                  border-gray-300
-                  text-gray-900
-                  focus:outline-none focus:ring-gray-500 focus:border-gray-500
-                  sm:text-sm
-                  rounded-md
-                "
+                class="block w-full pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
                 placeholder="Например DOGE"
               />
             </div>
@@ -48,18 +39,7 @@
                   }
                 "
                 :key="idx"
-                class="
-                  inline-flex
-                  items-center
-                  px-2
-                  m-1
-                  rounded-md
-                  text-xs
-                  font-medium
-                  bg-gray-300
-                  text-gray-800
-                  cursor-pointer
-                "
+                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
               >
                 {{ l }}
               </span>
@@ -72,28 +52,7 @@
         <button
           @click="add"
           type="button"
-          class="
-            my-4
-            inline-flex
-            items-center
-            py-2
-            px-4
-            border border-transparent
-            shadow-sm
-            text-sm
-            leading-4
-            font-medium
-            rounded-full
-            text-white
-            bg-gray-600
-            hover:bg-gray-700
-            transition-colors
-            duration-300
-            focus:outline-none
-            focus:ring-2
-            focus:ring-offset-2
-            focus:ring-gray-500
-          "
+          class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
         >
           <!-- Heroicon name: solid/mail -->
           <svg
@@ -122,43 +81,14 @@
               type="text"
               name="filter"
               id="filter"
-              class="
-                pr-10
-                border-gray-300
-                text-gray-900
-                focus:outline-none focus:ring-gray-500 focus:border-gray-500
-                sm:text-sm
-                rounded-md
-              "
+              class="pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
             />
           </label>
           <div class="flex justyfy-between mx-2">
             <button
               v-if="page > 1"
               @click="page--"
-              class="
-                my-4
-                mx-2
-                inline-flex
-                items-center
-                py-2
-                px-4
-                border border-transparent
-                shadow-sm
-                text-sm
-                leading-4
-                font-medium
-                rounded-full
-                text-white
-                bg-gray-600
-                hover:bg-gray-700
-                transition-colors
-                duration-300
-                focus:outline-none
-                focus:ring-2
-                focus:ring-offset-2
-                focus:ring-gray-500
-              "
+              class="my-4 mx-2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               type="button"
             >
               Назад
@@ -166,29 +96,7 @@
             <button
               v-if="hasNextPage"
               @click="page += 1"
-              class="
-                my-4
-                mx2
-                inline-flex
-                items-center
-                py-2
-                px-4
-                border border-transparent
-                shadow-sm
-                text-sm
-                leading-4
-                font-medium
-                rounded-full
-                text-white
-                bg-gray-600
-                hover:bg-gray-700
-                transition-colors
-                duration-300
-                focus:outline-none
-                focus:ring-2
-                focus:ring-offset-2
-                focus:ring-gray-500
-              "
+              class="my-4 mx2 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               type="button"
             >
               Вперед
@@ -205,14 +113,7 @@
               'border-4': selected === t,
             }"
             @click="isSelected(t)"
-            class="
-              bg-white
-              overflow-hidden
-              shadow
-              rounded-lg
-              border-purple-800 border-solid
-              cursor-pointer
-            "
+            class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
           >
             <div class="px-4 py-5 sm:p-6 text-center">
               <dt class="text-sm font-medium text-gray-500 truncate">
@@ -225,21 +126,7 @@
             <div class="w-full border-t border-gray-200"></div>
             <button
               @click.stop="remove(t)"
-              class="
-                flex
-                items-center
-                justify-center
-                font-medium
-                w-full
-                bg-gray-100
-                px-4
-                py-4
-                sm:px-6
-                text-md text-gray-500
-                hover:text-gray-600 hover:bg-gray-200 hover:opacity-20
-                transition-all
-                focus:outline-none
-              "
+              class="flex items-center justify-center font-medium w-full bg-gray-100 px-4 py-4 sm:px-6 text-md text-gray-500 hover:text-gray-600 hover:bg-gray-200 hover:opacity-20 transition-all focus:outline-none"
             >
               <svg
                 class="h-5 w-5"
@@ -416,7 +303,7 @@ export default {
         let currentTicker = { name: this.ticker.toUpperCase(), price: "-" };
         this.tickers = [...this.tickers, currentTicker];
         subscribeToTicker(currentTicker.name, (price) => {
-          this.updateTickers(currentTicker.name,price)
+          this.updateTickers(currentTicker.name, price);
         });
         this.ticker = "";
         this.filter = "";
@@ -437,12 +324,15 @@ export default {
       this.tickers = this.tickers.filter((ticker) => {
         return ticker !== itemToRemove;
       });
-      unsubscribe(itemToRemove.name)
+      unsubscribe(itemToRemove.name);
     },
 
     isSelected(ticker) {
       this.selected = ticker;
     },
+    updateGraph(price){
+      this.graph.push(price)
+    }
   },
   watch: {
     paginatedTicker() {
@@ -452,6 +342,9 @@ export default {
     },
     selected() {
       this.graph = [];
+      subscribeToTicker(this.selected.name,(price)=>{
+        this.updateGraph(price)
+      })
     },
     tickers() {
       localStorage.setItem("tickersList", JSON.stringify(this.tickers));
