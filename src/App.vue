@@ -330,9 +330,9 @@ export default {
     isSelected(ticker) {
       this.selected = ticker;
     },
-    updateGraph(price){
-      this.graph.push(price)
-    }
+    updateGraph(price) {
+      this.graph.push(price);
+    },
   },
   watch: {
     paginatedTicker() {
@@ -342,9 +342,11 @@ export default {
     },
     selected() {
       this.graph = [];
-      subscribeToTicker(this.selected.name,(price)=>{
-        this.updateGraph(price)
-      })
+      if (this.selected) {
+        subscribeToTicker(this.selected.name, (price) => {
+          this.updateGraph(price);
+        });
+      }
     },
     tickers() {
       localStorage.setItem("tickersList", JSON.stringify(this.tickers));
