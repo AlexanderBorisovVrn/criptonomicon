@@ -110,6 +110,7 @@
             v-for="t of paginatedTicker"
             :key="t.name"
             :class="{
+              'bg-red-100':t.price==='-',
               'border-4': selected === t,
             }"
             @click="isSelected(t)"
@@ -317,13 +318,14 @@ export default {
     updateTickers(tickerName, price) {
       this.tickers
         .filter((t) => t.name === tickerName)
-        .forEach((t) => (t.price = price));
+        .forEach((t) => (t.price = price||'Упс...'));
     },
 
     remove(itemToRemove) {
       this.tickers = this.tickers.filter((ticker) => {
         return ticker !== itemToRemove;
       });
+      this.selected=null;
       unsubscribe(itemToRemove.name);
     },
 
