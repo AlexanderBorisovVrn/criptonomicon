@@ -318,7 +318,7 @@ export default {
     updateTickers(tickerName, price) {
       this.tickers
         .filter((t) => t.name === tickerName)
-        .forEach((t) => (t.price = price||'Упс...'));
+        .forEach((t) => (t.price = this.transformPrice(price)||'Упс...'));
     },
 
     remove(itemToRemove) {
