@@ -12,7 +12,7 @@ socket.addEventListener('message', (e) => {
   
   const AGREGATE_TYPE = '5';
 
-  if (type !== AGREGATE_TYPE || !price) {
+  if (type !== AGREGATE_TYPE ) {
     return
   }
   if (currency === 'BTC') {
@@ -22,9 +22,8 @@ socket.addEventListener('message', (e) => {
   const newPrice = convertPrice(currency, price);
 
   handlers && handlers.forEach(fn => {
-    if (price) {
+
       fn(newPrice)
-    }
   });
 
 });
@@ -71,6 +70,7 @@ export function unsubscribe(tickerName) {
 }
 
 function convertPrice(tickerName, price) {
+  if(!price)return;
   if (tickerName === 'BTC') {
     return price
   }
