@@ -1,5 +1,6 @@
 const tickersHandlers = new Map();
 const API_KEY = '39dc4489c05f1d652c367141e7d6cbe708692580d58cb897f9bc55e5ca910df9';
+const url = new URL('https://min-api.cryptocompare.com/data/blockchain/list');
 const URLWs = 'wss://streamer.cryptocompare.com/v2';
 const socket = new WebSocket(URLWs + '?api_key=' + API_KEY);
 
@@ -12,7 +13,7 @@ socket.addEventListener('message', (e) => {
   
   const AGREGATE_TYPE = '5';
 
-  if (type !== AGREGATE_TYPE ) {
+  if (type !== AGREGATE_TYPE || !price ) {
     return
   }
   if (currency === 'BTC') {
@@ -76,4 +77,11 @@ function convertPrice(tickerName, price) {
   }
   const BTC_USD = localStorage.getItem('crossRate');
   return price * BTC_USD;
+}
+
+export async function fetchFullTickersList(){
+  url.searchParams.set('api_key',API_KEY)
+ const response = await fetch(url);
+ return await response.json(data=>data)
+
 }
