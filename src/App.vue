@@ -9,67 +9,7 @@
     </svg>
     </div> -->
     <div class="container">
-      <section>
-        <div class="flex">
-          <div class="max-w-xs">
-            <label for="wallet" class="block text-sm font-medium text-gray-700"
-              >Тикер</label
-            >
-            <div class="mt-1 relative rounded-md shadow-md">
-              <input
-                @keydown.enter="add"
-                autocomplete="off"
-                v-model="ticker"
-                type="text"
-                name="wallet"
-                id="wallet"
-                class="block w-full pr-10 border-gray-300 text-gray-900 focus:outline-none focus:ring-gray-500 focus:border-gray-500 sm:text-sm rounded-md"
-                placeholder="Например DOGE"
-              />
-            </div>
-            <div
-              class="flex bg-white shadow-md p-1 rounded-md shadow-md flex-wrap"
-            >
-              <span
-                v-for="(l, idx) of autocomplete"
-                @click="
-                  () => {
-                    ticker = l;
-                    add();
-                  }
-                "
-                :key="idx"
-                class="inline-flex items-center px-2 m-1 rounded-md text-xs font-medium bg-gray-300 text-gray-800 cursor-pointer"
-              >
-                {{ l }}
-              </span>
-            </div>
-            <div v-if="!isValid" class="text-sm text-red-600">
-              Такой тикер уже добавлен
-            </div>
-          </div>
-        </div>
-        <button
-          @click="add"
-          type="button"
-          class="my-4 inline-flex items-center py-2 px-4 border border-transparent shadow-sm text-sm leading-4 font-medium rounded-full text-white bg-gray-600 hover:bg-gray-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-        >
-          <!-- Heroicon name: solid/mail -->
-          <svg
-            class="-ml-0.5 mr-2 h-6 w-6"
-            xmlns="http://www.w3.org/2000/svg"
-            width="30"
-            height="30"
-            viewBox="0 0 24 24"
-            fill="#ffffff"
-          >
-            <path
-              d="M13 7h-2v4H7v2h4v4h2v-4h4v-2h-4V7zm-1-5C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"
-            ></path>
-          </svg>
-          Добавить
-        </button>
-      </section>
+      <add-ticker @add-ticker="add" />
 
       <template v-if="tickers.length">
         <hr class="w-full border-t border-gray-600 my-4" />
@@ -113,7 +53,6 @@
               'bg-red-100': t.price === '-',
               'border-4': selected === t,
             }"
-            @click="isSelected(t)"
             class="bg-white overflow-hidden shadow rounded-lg border-purple-800 border-solid cursor-pointer"
           >
             <div class="px-4 py-5 sm:p-6 text-center">
@@ -197,21 +136,15 @@
 
 <script>
 const { fetchTickers, subscribeToTicker, unsubscribe } = require("./api");
-//10. [ ] Наличие в состоянии зависимых данных | Критичность 5+.
-//2. [ ] При удалении остается таймер | Критичность 5.
-//4. [ ]Запросы напрямую внутри компонента | Критичность 5.
-//6. [ ] Обработка ошибок API| Критичность 5.
-//3. [ ] Количество запросов | Критичность 4.
-//8. [ ] При удалении тикера не меняется local storage| Критичность 4.
-//1. [ ] Одинаковый код в watch | Критичность 3.
-//9. [ ] local storage и анонимные вкладки | Критичность 3.
-//7. [ ] График плох если будет много цен | Критичность 2.
-//5. [ ] Магические строки и числа (URL,3000ms,local storage key,кол-во на странице) | Критичность 1.
+import AddTicker from "./components/AddTicker.vue";
+
 export default {
   name: "App",
+  components: {
+    AddTicker,
+  },
   data() {
     return {
-      ticker: "",
       tickers: [],
       selected: null,
 
@@ -247,16 +180,7 @@ export default {
   unmounted() {
     window.removeEventListener("resize", this.updateMaxElementsInGraph);
   },
-  beforeUpdate() {
-    this.autocomplete = this.tickersList
-      .filter((el) => {
-        if (!this.ticker) {
-          return;
-        }
-        return el.indexOf(this.ticker.toUpperCase()) > -1;
-      })
-      .slice(0, 4);
-  },
+  beforeUpdate() {},
   computed: {
     startIndex() {
       return (this.page - 1) * 6;
@@ -292,36 +216,19 @@ export default {
         filter: this.filter,
       };
     },
-    isValid() {
-      return (
-        this.tickers.filter(
-          (ticker) => ticker.name === this.ticker.toUpperCase()
-        ).length === 0
-      );
-    },
-    isInputTicker() {
-      return !!this.ticker.trim();
-    },
   },
 
   methods: {
-    add() {
-      if (!this.isInputTicker) {
-        this.ticker = "";
-        this.filter = "";
+    add(ticker) {
+      if (!ticker) {
         return;
       }
-      if (this.isValid) {
-        let currentTicker = { name: this.ticker.toUpperCase(), price: "-" };
-        this.tickers = [...this.tickers, currentTicker];
-        subscribeToTicker(currentTicker.name, (price) => {
-          this.updateTickers(currentTicker.name, price);
-        });
-        this.ticker = "";
-        this.filter = "";
-      } else {
-        return;
-      }
+      let currentTicker = { name: ticker.toUpperCase(), price: "-" };
+      this.tickers = [...this.tickers, currentTicker];
+      subscribeToTicker(currentTicker.name, (price) => {
+        this.updateTickers(currentTicker.name, price);
+      });
+      this.filter = "";
     },
     transformPrice(price) {
       return price > 1 ? price.toFixed(2) : price.toPrecision(2);
@@ -339,10 +246,13 @@ export default {
       this.selected = null;
       unsubscribe(itemToRemove.name);
     },
-
-    isSelected(ticker) {
-      this.selected = ticker;
+    isValid(ticker) {
+      return (
+        this.tickers.filter((current) => current.name === ticker.toUpperCase())
+          .length === 0
+      );
     },
+
     updateGraph(price) {
       this.graph.push(price);
       this.updateMaxElementsInGraph();
