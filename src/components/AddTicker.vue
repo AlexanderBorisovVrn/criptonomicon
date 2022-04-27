@@ -36,7 +36,7 @@ export default {
   data(){
     return {
       ticker:'',
-      isValid:''
+      isValid:true
     }
   },
   components:{

@@ -11,47 +11,48 @@
   </div>
 </template>
 <script>
+import { fetchFullTickersList as fetchTickers } from "../api";
 export default {
-  props:{
-    ticker:{
-      type:String,
-      required:false,
-      default:''
-    }
+  props: {
+    ticker: {
+      type: String,
+      required: false,
+      default: "",
+    },
   },
-  data(){
+  data() {
     return {
       tickersList: [],
-      autocomplete:[],
-    }
+      autocomplete: [],
+    };
   },
-  created(){
-  fetch("https://min-api.cryptocompare.com/data/all/coinlist?summary=true")
-      .then((res) => res.json())
-      .then((allTickers) => {
-        this.tickersList = Object.keys(allTickers.Data);
-      });
+  created() {
+    fetchTickers().then((allTickers) => {
+      this.tickersList = Object.keys(allTickers.Data);
+    });
   },
-  methods:{
-    completeTicker(ticker){
-      this.$emit('complete-ticker',ticker);
-    }
+  methods: {
+    completeTicker(ticker) {
+      this.$emit("complete-ticker", ticker);
+    },
   },
-  computed:{
-    autocompleteList(){
-      return this.tickersList.filter(t=>t.includes(this.ticker.toUpperCase())).slice(0,4);
-    }
+  computed: {
+    autocompleteList() {
+      return this.tickersList
+        .filter((t) => t.includes(this.ticker.toUpperCase()))
+        .slice(0, 4);
+    },
   },
-  watch:{
-    ticker(){
-      if(!this.tickersList){return}
+  watch: {
+    ticker() {
+      if (!this.tickersList) {
+        return;
+      }
       this.autocomplete = this.autocompleteList;
-      if(!this.ticker){
-        this.autocomplete=[]
+      if (!this.ticker) {
+        this.autocomplete = [];
       }
     },
-    
-   
-  }
-}
+  },
+};
 </script>

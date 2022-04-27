@@ -135,7 +135,7 @@
 </template>
 
 <script>
-const { fetchTickers, subscribeToTicker, unsubscribe } = require("./api");
+const { subscribeToTicker, unsubscribe } = require("./api");
 import AddTicker from "./components/AddTicker.vue";
 
 export default {
@@ -150,7 +150,6 @@ export default {
 
       graph: [],
       maxElementsInGraph: null,
-      autocomplete: [],
 
       filter: "",
       page: 1,
