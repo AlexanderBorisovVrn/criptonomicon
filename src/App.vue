@@ -151,7 +151,7 @@ export default {
       graph: [],
       maxElementsInGraph: null,
       autocomplete: [],
-      tickersList: [],
+
       filter: "",
       page: 1,
       nextPage: true,
@@ -162,11 +162,7 @@ export default {
     if (tickersList) {
       this.tickers = tickersList;
     }
-    fetch("https://min-api.cryptocompare.com/data/all/coinlist?summary=true")
-      .then((res) => res.json())
-      .then((data) => {
-        this.tickersList = Object.keys(data.Data);
-      });
+  
 
     this.tickers.forEach((ticker) =>
       subscribeToTicker(ticker.name, (price) =>
