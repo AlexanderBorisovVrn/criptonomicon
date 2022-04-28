@@ -45,12 +45,11 @@
         </div>
 
         <hr class="w-full border-t border-gray-600 my-4" />
-        
+
         <dl class="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-3">
           <div
             v-for="t of paginatedTicker"
             @click="selected = t"
-            
             :key="t.name"
             :class="{
               'bg-red-100': t.price === '-',
@@ -88,10 +87,9 @@
           </div>
         </dl>
         <hr class="w-full border-t border-gray-600 my-4" />
-        
       </template>
 
-    <graph-board :selected="selected" @close-graph="selected=null"/>
+      <graph-board :selected="selected" @close-graph="selected = null" />
     </div>
   </div>
 </template>
@@ -99,20 +97,19 @@
 <script>
 const { subscribeToTicker, unsubscribe } = require("./api");
 import AddTicker from "./components/AddTicker.vue";
-import GraphBoard from './components/GraphBoard.vue'
+import GraphBoard from "./components/GraphBoard.vue";
 
 export default {
   name: "App",
   components: {
     AddTicker,
-    GraphBoard
+    GraphBoard,
   },
   data() {
     return {
       tickers: [],
       selected: null,
 
-      graph: [],
       maxElementsInGraph: null,
 
       filter: "",
@@ -125,7 +122,6 @@ export default {
     if (tickersList) {
       this.tickers = tickersList;
     }
-  
 
     this.tickers.forEach((ticker) =>
       subscribeToTicker(ticker.name, (price) =>
@@ -158,7 +154,7 @@ export default {
     hasNextPage() {
       return this.filteredTickers.length > this.endIndex;
     },
-  
+
     pageStateOptions() {
       return {
         page: this.page,
@@ -201,21 +197,6 @@ export default {
           .length === 0
       );
     },
-
-    updateGraph(price) {
-      this.graph.push(price);
-      this.updateMaxElementsInGraph();
-    },
-    updateMaxElementsInGraph() {
-      if (!this.$refs.graph) {
-        return;
-      }
-      this.maxElementsInGraph = this.$refs.graph.clientWidth / 39;
-      if (this.graph.length > this.maxElementsInGraph) {
-        const start = this.graph.length - this.maxElementsInGraph;
-        this.graph = this.graph.slice(start);
-      }
-    },
   },
   watch: {
     paginatedTicker() {
@@ -223,31 +204,30 @@ export default {
         this.page -= 1;
       }
     },
-    selected() {
-      this.graph = [];
-      if (this.selected) {
-        subscribeToTicker(this.selected.name, (price) => {
-          this.updateGraph(price);
-        });
-      }
-    },
-    tickers() {
-      localStorage.setItem("tickersList", JSON.stringify(this.tickers));
-    },
+    // selected() {
+    //   this.graph = [];
+    //   if (this.selected) {
+    //     subscribeToTicker(this.selected.name, (price) => {
+    //       this.updateGraph(price);
+    //     });
+    //   }
+  },
+  tickers() {
+    localStorage.setItem("tickersList", JSON.stringify(this.tickers));
+  },
 
-    pageStateOptions(value) {
-      window.history.pushState(
-        null,
-        document.title,
-        `${window.location.pathname}?filter=${value.filter}&page=${value.page}`
-      );
-      const { filter, page } = Object.fromEntries(
-        new URL(window.location).searchParams.entries()
-      );
-      if (filter) {
-        this.filter = filter;
-      }
-    },
+  pageStateOptions(value) {
+    window.history.pushState(
+      null,
+      document.title,
+      `${window.location.pathname}?filter=${value.filter}&page=${value.page}`
+    );
+    const { filter, page } = Object.fromEntries(
+      new URL(window.location).searchParams.entries()
+    );
+    if (filter) {
+      this.filter = filter;
+    }
   },
 };
 </script>

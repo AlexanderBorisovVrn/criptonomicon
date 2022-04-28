@@ -20,19 +20,27 @@
 
 <script>
 import CloseButton from "./CloseButton.vue";
+import { subscribeToTicker } from "../api";
 export default {
   components: {
     CloseButton,
   },
   props: {
     selected: {
-      type: [Object,null],
+      type: [Object, null],
       required: true,
       default: null,
     },
   },
-
-  methods: {
+  emits:{
+    'close-graph':null
+  },
+  data() {
+    return {
+      graph: [],
+    };
+  },
+  computed: {
     normalizedGraph() {
       const maxVal = Math.max(...this.graph);
       const minVal = Math.min(...this.graph);
@@ -41,10 +49,35 @@ export default {
         if (minVal === maxVal) {
           return 50;
         }
-        return 5 + (+(price - minVal) * 95) / (maxVal - minVal);
+        return 5 + ((price - minVal) * 95) / (maxVal - minVal);
       });
     },
-    
+  },
+  methods: {
+    updateGraph(price) {
+      this.graph.push(price);
+      this.updateMaxElementsInGraph();
+    },
+    updateMaxElementsInGraph() {
+      if (!this.$refs.graph) {
+        return;
+      }
+      this.maxElementsInGraph = this.$refs.graph.clientWidth / 39;
+      if (this.graph.length > this.maxElementsInGraph) {
+        const start = this.graph.length - this.maxElementsInGraph;
+        this.graph = this.graph.slice(start);
+      }
+    },
+  },
+  watch: {
+    selected() {
+      this.graph = [];
+      if (this.selected) {
+        subscribeToTicker(this.selected.name, (price) =>
+          this.updateGraph(price)
+        );
+      }
+    },
   },
 };
 </script>

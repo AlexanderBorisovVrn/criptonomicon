@@ -51,6 +51,9 @@ export default {
     },
 
   },
+  emits:{
+    'add-ticker':value=>typeof(value)==='object'
+  },
   methods:{
      add() {
        this.$emit('add-ticker',this.ticker);

@@ -20,6 +20,9 @@ export default {
       default: "",
     },
   },
+  emits:{
+    "complete-ticker":(value)=>typeof(value)==='string'
+  },
   data() {
     return {
       tickersList: [],

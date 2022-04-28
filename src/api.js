@@ -23,12 +23,10 @@ socket.addEventListener('message', (e) => {
   const newPrice = convertPrice(currency, price);
 
   handlers && handlers.forEach(fn => {
-
       fn(newPrice)
   });
 
 });
-
 
 
 const subscribeAction = "SubAdd";
